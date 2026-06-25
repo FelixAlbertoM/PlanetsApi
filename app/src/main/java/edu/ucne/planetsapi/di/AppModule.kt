@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import edu.ucne.planetsapi.data.remote.DragonBallApi
+import edu.ucne.planetsapi.data.remote.PlanetRemoteDataSource
 import edu.ucne.planetsapi.data.repository.PlanetRepositoryImpl
 import edu.ucne.planetsapi.domain.repository.PlanetRepository
 import retrofit2.Retrofit
@@ -19,9 +20,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMoshi(): Moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    fun provideMoshi(): Moshi {
+        return Moshi
+            .Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+    }
 
     @Provides
     @Singleton
@@ -34,10 +38,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePlanetRepositoryImpl(api: DragonBallApi): PlanetRepositoryImpl =
-        PlanetRepositoryImpl(api)
+    fun providePlanetRepositoryImpl(remoteDataSource: PlanetRemoteDataSource): PlanetRepository {
+        return PlanetRepositoryImpl(remoteDataSource)
+    }
 
-    @Provides
-    @Singleton
-    fun providePlanetRepository(impl: PlanetRepositoryImpl): PlanetRepository = impl
 }

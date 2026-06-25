@@ -19,81 +19,39 @@ import coil.compose.AsyncImage
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanetDetailScreen(
-    planetId: Int,
-    onNavigateBack: () -> Unit,
-    viewModel: PlanetDetailViewModel = hiltViewModel()
+    viewModel: PlanetDetailViewModel = hiltViewModel(),
+    onBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(planetId) {
-        viewModel.load(planetId)
-    }
-
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(state.planet?.name ?: "Detalle") },
+            TopAppBar(
+                title = { Text("Detalle del Planeta") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, null)
                     }
                 }
             )
         }
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-        ) {
-            when {
-                state.isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                state.error != null -> {
-                    Text(
-                        "Error: ${state.error}",
-                        color = Color.Red,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                state.planet != null -> {
-                    val planet = state.planet!!
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        item {
-                            AsyncImage(
-                                model = planet.image,
-                                contentDescription = planet.name,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(250.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        item {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    planet.name,
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(Modifier.height(4.dp))
-                                Text(
-                                    if (planet.isDestroyed) "Destruido" else "Existe",
-                                    color = if (planet.isDestroyed) Color.Red else Color.Green,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(Modifier.height(8.dp))
-                                Text(
-                                    planet.description,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    }
-                }
+        state.planet?.let { planet ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .padding(16.dp)
+            ) {
+                AsyncImage(
+                    model = planet.image,
+                    contentDescription = planet.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(240.dp)
+                )
+                Text(planet.name)
+                Text(if (planet.isDestroyed) "Destruido" else "Existe")
+                Text(planet.description)
             }
         }
     }

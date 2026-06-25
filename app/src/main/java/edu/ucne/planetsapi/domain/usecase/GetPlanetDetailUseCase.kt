@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetPlanetDetailUseCase @Inject constructor(
     private val repository: PlanetRepository
 ) {
-    suspend operator fun invoke(id: Int) = repository.getPlanetById(id)
+    suspend operator fun invoke(id: Int) = repository.getPlanetDetail(id)
 }

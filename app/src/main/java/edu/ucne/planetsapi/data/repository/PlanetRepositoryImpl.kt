@@ -1,19 +1,43 @@
 package edu.ucne.planetsapi.data.repository
 
-import edu.ucne.planetsapi.data.remote.DragonBallApi
+
 import edu.ucne.planetsapi.domain.model.Planet
 import edu.ucne.planetsapi.domain.repository.PlanetRepository
 import javax.inject.Inject
+import edu.ucne.planetsapi.data.remote.PlanetRemoteDataSource
+import edu.ucne.planetsapi.data.remote.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class PlanetRepositoryImpl @Inject constructor(
-    private val api: DragonBallApi
+    private val remoteDataSource: PlanetRemoteDataSource
 ) : PlanetRepository {
 
-    override suspend fun getPlanets(): List<Planet> {
-        return api.getPlanets().items.map { it.toDomain() }
+    override fun getPlanets(
+        page: Int,
+        limit: Int,
+        name: String?
+    ): Flow<Resource<List<Planet>>> = flow {
+        emit(Resource.Loading())
+
+        val response = remoteDataSource.getPlanets(page, limit, name)
+
+        response.onSuccess { planets ->
+            emit(Resource.Success(planets.items.map { it.toDomain() }))
+        }.onFailure {
+            emit(Resource.Error(it.message ?: "Error desconocido"))
+        }
     }
 
-    override suspend fun getPlanetById(id: Int): Planet {
-        return api.getPlanetById(id).toDomain()
+    override fun getPlanetDetail(id: Int): Flow<Resource<Planet>> = flow {
+        emit(Resource.Loading())
+
+        val response = remoteDataSource.getPlanetDetail(id)
+
+        response.onSuccess { planet ->
+            emit(Resource.Success(planet.toDomain()))
+        }.onFailure {
+            emit(Resource.Error(it.message ?: "Error desconocido"))
+        }
     }
 }

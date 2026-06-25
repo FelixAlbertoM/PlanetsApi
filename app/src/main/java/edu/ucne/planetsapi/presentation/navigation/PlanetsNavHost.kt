@@ -16,7 +16,7 @@ fun PlanetsNavHost(navHostController: NavHostController) {
     ) {
         composable<Screen.PlanetList> {
             ListPlanetScreen(
-                goToPlanet = { id ->
+                onPlanetClick = { id ->
                     navHostController.navigate(Screen.PlanetDetail(id))
                 }
             )
@@ -24,8 +24,7 @@ fun PlanetsNavHost(navHostController: NavHostController) {
         composable<Screen.PlanetDetail> {
             val args = it.toRoute<Screen.PlanetDetail>()
             PlanetDetailScreen(
-                planetId = args.planetId,
-                onNavigateBack = { navHostController.navigateUp() }
+                onBack = {navHostController.navigateUp()}
             )
         }
     }
