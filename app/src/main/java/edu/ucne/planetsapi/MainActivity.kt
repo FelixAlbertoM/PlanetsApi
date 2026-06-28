@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import edu.ucne.planetsapi.presentation.navigation.PlanetsNavHost
+import edu.ucne.planetsapi.presentation.navigation.PlanetNavHost
 import edu.ucne.planetsapi.ui.theme.PlanetsApiTheme
 
 @AndroidEntryPoint
@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PlanetsApiTheme {
                 val navController = rememberNavController()
-                PlanetsNavHost(navHostController = navController)
+                PlanetNavHost(navHostController = navController)
             }
         }
     }

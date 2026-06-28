@@ -8,4 +8,8 @@ sealed class Screen {
 
     @Serializable
     data class PlanetDetail(val planetId: Int) : Screen()
+    @Serializable
+    data object CharacterList: Screen()
+    @Serializable
+    data class CharacterDetail(val id: Int): Screen()
 }
